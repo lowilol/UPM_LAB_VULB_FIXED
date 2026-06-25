@@ -1,0 +1,86 @@
+.perfil-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.perfil-container h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.perfil-container div {
+  margin-bottom: 20px;
+}
+
+.perfil-container label {
+  font-weight: bold;
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.perfil-container p {
+  background: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 0;
+  color: #333;
+}
+
+.perfil-container input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.perfil-container input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.perfil-container button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.perfil-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos adicionales para mejorar la experiencia en dispositivos móviles */
+@media (max-width: 480px) {
+  .perfil-container {
+      padding: 15px;
+  }
+
+  .perfil-container h3 {
+      font-size: 20px;
+  }
+
+  .perfil-container input {
+      padding: 8px;
+  }
+
+  .perfil-container button {
+      padding: 10px 15px;
+  }
+}

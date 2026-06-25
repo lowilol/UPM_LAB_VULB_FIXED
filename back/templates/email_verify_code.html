@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Código de Verificación</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 100%;
+                padding: 20px;
+                background-color: #f4f4f4;
+            }
+            .email-content {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                padding: 10px 0;
+            }
+            .header img {
+                max-width: 150px;
+            }
+            h2 {
+                color: #333333;
+            }
+            p {
+                color: #555555;
+                line-height: 1.6;
+            }
+            .code {
+                font-size: 2em;
+                color: #007bff;
+                text-align: center;
+                padding: 10px;
+                background-color: #f4f4f4;
+                border-radius: 5px;
+                display: inline-block;
+            }
+            .footer {
+                margin-top: 30px;
+                text-align: center;
+                font-size: 12px;
+                color: #999999;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="email-content">
+                <div class="header">
+                    <img src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="UPM Logo" />
+                </div>
+                <h2>Código de Verificación</h2>
+                <p>Hola,</p>
+                <p>Tu código de verificación para completar el registro es:</p>
+                <div class="code">${verificationCode}</div>
+                <p>Este código es válido por 15 minutos. Si no solicitaste esta verificación, ignora este correo.</p>
+                <p>Gracias,<br>El equipo de soporte de AppLabUPM</p>
+            </div>
+            <div class="footer">
+                <p>© 2025 Universidad Politécnica de Madrid - Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </body>
+    </html>

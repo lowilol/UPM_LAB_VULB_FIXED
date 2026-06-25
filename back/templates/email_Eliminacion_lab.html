@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            background-color: #ffffff;
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header img {
+            max-width: 150px;
+        }
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="UPM Logo" />
+            <h1>Notificación de dada de baja del laboratorio</h1>
+        </div>
+        <div class="content">
+            <p>Estimado/a <strong>${ProfesorNombre}</strong>,</p>
+            <p>Lamentamos informarle que el laboratorio ha sido eliminado del sistema.</p>
+            <p>Motivo: El laboratorio <strong> ${nombrelab} </strong> ha sido eliminado del sistema debido a una reorganización de recursos, ajustes en la oferta de servicios o mantenimiento de la base de datos para garantizar la actualización y optimización de la información registrada.</p>
+            <p>Le pedimos disculpas por cualquier inconveniente causado. Si tiene alguna pregunta, no dude en contactarnos. Si requires alguna cosa contacteme al correo : ${emailPas}</p>
+            <p>Atentamente,</p>
+            <p><strong> PAS: ${nombrepas} </strong></p>
+        </div>
+        <div class="footer">
+            <p>© 2025 Universidad Politécnica de Madrid - Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
