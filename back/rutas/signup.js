@@ -27,6 +27,15 @@ router.post("/", async function (req, res, next) {
 
   console.log(rol)
 
+  // Solo se admiten correos institucionales de la UPM.
+  if (!rol) {
+    return res.status(409).json(
+      jsonResponse(409, {
+        error: "El correo debe ser institucional de la UPM (@upm.es o @alumnos.upm.es).",
+      })
+    );
+  }
+
   try {
     const emailEx = await emailExists(email);
     const userEx = await UserExists(name,lastname);
@@ -42,7 +51,12 @@ router.post("/", async function (req, res, next) {
       
       const verificationCode =   await generateVerificationCode(email);
       console.log(verificationCode);
-        sendVerificationEmail(email, verificationCode);
+        // No se hace await a propósito (no bloquear la respuesta), pero se
+        // captura el rechazo para que un fallo de SMTP no provoque una
+        // "unhandled promise rejection" que tumbe el proceso en Node >= 15.
+        sendVerificationEmail(email, verificationCode).catch((e) =>
+          console.error("Error al enviar el correo de verificación:", e?.message || e)
+        );
        res.status(200).json({ message: `Código enviado a ${email}` });
     }
   } catch (err) {

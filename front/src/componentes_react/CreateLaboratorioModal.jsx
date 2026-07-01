@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import '../styles/ModalStyle.css';
-import AlertResponse from "./alert";
+import { Modal, Button, Label, TextInput } from "flowbite-react";
 
+import AlertResponse from "./alert";
 const CrearLaboratorioModal = ({ showModalCreateLab, onClose }) => {
   const [nombre, setNombre] = useState("");
   const [ubicacion, setUbicacion] = useState("");
@@ -14,7 +14,6 @@ const CrearLaboratorioModal = ({ showModalCreateLab, onClose }) => {
     setError("");
     setSuccessMessage("");
 
-   
     if (!nombre || !ubicacion || !capacidad) {
       setError("Todos los campos son obligatorios.");
       return;
@@ -23,10 +22,7 @@ const CrearLaboratorioModal = ({ showModalCreateLab, onClose }) => {
     try {
       const response = await fetch("/api/laboratorio", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombre_laboratorio: nombre,
           ubicacion: ubicacion,
@@ -48,56 +44,48 @@ const CrearLaboratorioModal = ({ showModalCreateLab, onClose }) => {
     }
   };
 
-  if (!showModalCreateLab) {
-    return null; // No renderiza el modal si no está activo
-  }
-
   return (
-    <div className="modal-overlay" onClick={(e) => e.target.classList.contains("modal-overlay") && onClose()}>
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>
-          &times;
-        </button>
-        <h3>Dar de Alta Laboratorio</h3>
-        <div>
-              <AlertResponse  mensage={successMessage} color={"success"}/>
-              </div>
-              <div>
-              <AlertResponse  mensage={error}  color={"failure"} />
-              </div>
+    <Modal show={showModalCreateLab} onClose={onClose} size="md" popup>
+      <Modal.Header />
+      <Modal.Body>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+            Dar de Alta Laboratorio
+          </h3>
 
+          <AlertResponse mensage={successMessage} color={"success"} />
+          <AlertResponse mensage={error} color={"failure"} />
 
-        <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="nombre">Nombre del Laboratorio</label>
-            <input
+            <Label htmlFor="nombre" value="Nombre del Laboratorio" className="mb-1 block" />
+            <TextInput
               type="text"
               id="nombre"
               maxLength={4}
               onKeyDown={(e) => {
-                    if (!/^\d$/.test(e.key) && e.key !== 'Backspace') {
-                      e.preventDefault();
-                    }
-                    
-                  }}
+                if (!/^\d$/.test(e.key) && e.key !== "Backspace") {
+                  e.preventDefault();
+                }
+              }}
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
             />
           </div>
           <div>
-            <label htmlFor="ubicacion">Ubicación</label>
-            <input
+            <Label htmlFor="ubicacion" value="Ubicación" className="mb-1 block" />
+            <TextInput
               type="text"
               id="ubicacion"
               value={ubicacion}
               onChange={(e) => setUbicacion(e.target.value)}
               required
+              maxLength={100}
             />
           </div>
           <div>
-            <label htmlFor="capacidad">Capacidad</label>
-            <input
+            <Label htmlFor="capacidad" value="Capacidad" className="mb-1 block" />
+            <TextInput
               type="number"
               id="capacidad"
               value={capacidad}
@@ -105,12 +93,13 @@ const CrearLaboratorioModal = ({ showModalCreateLab, onClose }) => {
               required
               min="1"
             />
-
           </div>
-          <button type="submit" className="modal-submit">Crear Laboratorio</button>
+          <Button type="submit" className="w-full">
+            Crear Laboratorio
+          </Button>
         </form>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 

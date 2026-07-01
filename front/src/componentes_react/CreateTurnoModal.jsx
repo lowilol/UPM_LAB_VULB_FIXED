@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import '../styles/ModalStyle.css';
-import AlertResponse from "./alert";
-import { useAuth } from "../auth/AuthProvider";
+import { Modal, Button, Label, Select, TextInput } from "flowbite-react";
 
+import AlertResponse from "./alert";
 const CreateTurnoModal = ({ showModalCreateTurno, onClose }) => {
-  const { getUser } = useAuth();
   const [laboratorios, setLaboratorios] = useState([]);
   const [laboratorio, setLaboratorio] = useState("");
   const [fecha, setFecha] = useState("");
@@ -16,35 +14,20 @@ const CreateTurnoModal = ({ showModalCreateTurno, onClose }) => {
   // Obtener laboratorios disponibles desde el backend
   useEffect(() => {
     if (showModalCreateTurno) {
-      fetch("/api/laboratorio", {
-        headers: {},
-        credentials: 'include',
-      })
+      fetch("/api/laboratorio")
         .then((res) => res.json())
         .then((data) => {
           if (data && Array.isArray(data)) {
             const laboratoriosHabilitados = data.filter(lab => !lab.deshabilitado);
-          setLaboratorios(laboratoriosHabilitados);
+            setLaboratorios(laboratoriosHabilitados);
           } else {
             setError("Error al cargar laboratorios");
           }
         })
         .catch(() => setError("Error de conexión con el servidor"));
-
-
-
     }
   }, [showModalCreateTurno]);
 
-  if (!showModalCreateTurno) {
-    return null;
-  }
-
-  const handleOverlayClick = (e) => {
-    if (e.target.classList.contains("modal-overlay")) {
-      onClose();
-    }
-  };
   const generateHourOptions = (start, end, filterAfter = null) => {
     const options = [];
     for (let hour = start; hour <= end; hour++) {
@@ -60,7 +43,7 @@ const CreateTurnoModal = ({ showModalCreateTurno, onClose }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = getUser() || JSON.parse(sessionStorage.getItem("user") || "null");
+    const userData = JSON.parse(sessionStorage.getItem("user"));
     const idUser = userData?.id_user || null;
 
     if (!laboratorio || !fecha || !horaInicio || !horaFin || !idUser) {
@@ -71,27 +54,22 @@ const CreateTurnoModal = ({ showModalCreateTurno, onClose }) => {
     try {
       const response = await fetch("/api/turno", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id_laboratorio: laboratorio,
           id_user: idUser,
           fecha,
           hora_inicio: horaInicio,
           hora_fin: horaFin,
-          
         }),
       });
       const Data = await response.json();
 
       if (response.ok) {
         setError("");
-        setSuccess(Data.message)
-        
+        setSuccess(Data.message);
       } else {
-        setSuccess("")
+        setSuccess("");
         setError(Data.error || "Error al crear el turno");
       }
     } catch (err) {
@@ -100,81 +78,75 @@ const CreateTurnoModal = ({ showModalCreateTurno, onClose }) => {
   };
 
   return (
-    showModalCreateTurno && (
-      <div className="modal-overlay"
-        onClick={handleOverlayClick}>
-        <div className="modal-content">
-          <button className="modal-close" onClick={onClose}>
-            &times;
-          </button>
-          <h3>Crear Turno</h3>
+    <Modal show={showModalCreateTurno} onClose={onClose} size="md" popup>
+      <Modal.Header />
+      <Modal.Body>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h3 className="text-xl font-medium text-gray-900 dark:text-white">Crear Turno</h3>
+
+          <AlertResponse mensage={success} color={"success"} />
+          <AlertResponse mensage={error} color={"failure"} />
+
           <div>
-              <AlertResponse  mensage={success} color={"success"}/>
-              </div>
-              <div>
-              <AlertResponse  mensage={error}  color={"failure"} />
-              </div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="laboratorio">Laboratorio</label>
-              <select
-                id="laboratorio"
-                value={laboratorio}
-                onChange={(e) => setLaboratorio(e.target.value)}
-                required
-              >
-                <option value="">Selecciona un laboratorio</option>
-                {laboratorios.map((lab) => (
-                  <option key={lab.id_laboratorio} value={lab.id_laboratorio}>
-                    {lab.nombre_laboratorio}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="fecha">Fecha</label>
-              <input
-                type="date"
-                id="fecha"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="horaInicio">Hora de Inicio</label>
-              <select
-                id="horaInicio"
-                value={horaInicio.split(":")[0]}
-                onChange={(e) => setHoraInicio(`${e.target.value}:00`)}
-                required
-              >
-                <option value="">Selecciona una hora</option>
-                {generateHourOptions(9, 21)} 
-              </select>
-            </div>
+            <Label htmlFor="laboratorio" value="Laboratorio" className="mb-1 block" />
+            <Select
+              id="laboratorio"
+              value={laboratorio}
+              onChange={(e) => setLaboratorio(e.target.value)}
+              required
+            >
+              <option value="">Selecciona un laboratorio</option>
+              {laboratorios.map((lab) => (
+                <option key={lab.id_laboratorio} value={lab.id_laboratorio}>
+                  {lab.nombre_laboratorio}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="fecha" value="Fecha" className="mb-1 block" />
+            <TextInput
+              type="date"
+              id="fecha"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="horaInicio" value="Hora de Inicio" className="mb-1 block" />
+            <Select
+              id="horaInicio"
+              value={horaInicio.split(":")[0]}
+              onChange={(e) => setHoraInicio(`${e.target.value}:00`)}
+              required
+            >
+              <option value="">Selecciona una hora</option>
+              {generateHourOptions(9, 21)}
+            </Select>
+          </div>
 
-            <div>
-              <label htmlFor="horaFin">Hora de Fin</label>
-              <select
-                id="horaFin"
-                value={horaFin.split(":")[0]}
-                onChange={(e) => setHoraFin(`${e.target.value}:00`)}
-                required
-                disabled={!horaInicio}
-              >
-                <option value="">Selecciona una hora</option>
-                {horaInicio
-                  ? generateHourOptions(9, 21, parseInt(horaInicio.split(":")[0]))
-
-                  : generateHourOptions(9, 21)}
-              </select>
-            </div>
-            <button type="submit" className="modal-submit">Crear Turno</button>
-          </form>
-        </div>
-      </div>
-    )
+          <div>
+            <Label htmlFor="horaFin" value="Hora de Fin" className="mb-1 block" />
+            <Select
+              id="horaFin"
+              value={horaFin.split(":")[0]}
+              onChange={(e) => setHoraFin(`${e.target.value}:00`)}
+              required
+              disabled={!horaInicio}
+            >
+              <option value="">Selecciona una hora</option>
+              {horaInicio
+                ? generateHourOptions(9, 21, parseInt(horaInicio.split(":")[0]))
+                : generateHourOptions(9, 21)}
+            </Select>
+          </div>
+          <Button type="submit" className="w-full">
+            Crear Turno
+          </Button>
+        </form>
+      </Modal.Body>
+    </Modal>
   );
 };
 

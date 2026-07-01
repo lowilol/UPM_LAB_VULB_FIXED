@@ -14,7 +14,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { API, mockUnauthenticated, mockAuthenticated, mockDashboard } from './helpers';
+import { API, mockUnauthenticated, mockAuthenticated, mockDashboard, buildUser } from './helpers';
 
 test.beforeEach(async ({ page }) => {
   await mockUnauthenticated(page);
@@ -150,14 +150,16 @@ test('S-08 · Código de verificación correcto redirige al dashboard', async ({
   await page.route(`${API}/signup`, (route) =>
     route.fulfill({ status: 200, json: { message: 'OK' } })
   );
+  // verifyCode hace auto-login: devuelve el usuario (formato plano)
   await page.route(`${API}/verifyCode`, (route) =>
-    route.fulfill({ status: 200, json: { message: 'Verificado correctamente.' } })
+    route.fulfill({
+      status: 200,
+      json: { message: 'Verificado correctamente.', user: buildUser('Alumno') },
+    })
   );
   await mockDashboard(page, 'Alumno');
-  // verifyToken → autenticado tras verificar
-  await page.route(`${API}/verifyToken`, (route) =>
-    route.fulfill({ status: 200, json: { user: { dataValues: { rol: 'Alumno' } } } })
-  );
+  // verifyToken se mantiene en 401 (beforeEach) para que el formulario de
+  // /signup se muestre; la sesión se establece tras verifyCode vía saveUser.
 
   await page.goto('/signup');
   await fillSignupForm(page);

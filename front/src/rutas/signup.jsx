@@ -1,4 +1,3 @@
-import '../styles/output.css' 
 import { Modal, Label, TextInput } from 'flowbite-react';
 import { useState } from "react";
 import { useAuth } from "../auth/AuthProvider";
@@ -86,6 +85,11 @@ export default function signup() {
         setEmail("");
         setPassword("");
         setShowVerificationModal(false);
+        // Auto-login: el backend ya emitió la cookie; guardamos el usuario
+        // para marcar la sesión como autenticada antes de ir al dashboard.
+        if (json.user) {
+          auth.saveUser(json.user);
+        }
         goTo("/dashboard");
       } else {
         setErrorResponseVerification(json.body.error);
@@ -110,15 +114,10 @@ export default function signup() {
  
     
   
-<div  className="row container-min-width  login-page">
-<div className=" max-w-[30vw] md:max-w-[20vw] lg:max-w-[5vw] bg-white rounded-lg shadow dark:border sm:max-w-sm md:max-w-md xl:max-w-lg dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out">
-      
-          
-      
-      <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-      <div className='card-header'>
-        <img className=" h-48" src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="logo"/> 
-
+<div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
+      <div className="w-full max-w-md rounded-lg bg-white shadow transition-transform duration-300 ease-in-out dark:border dark:border-gray-700 dark:bg-gray-800">
+        <div className="flex justify-center pt-6">
+          <img className="h-40" src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="logo"/>
         </div>
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             
@@ -128,27 +127,27 @@ export default function signup() {
               </div>
                  <div>
                       <label htmlFor="nombre" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
-                      <input type="text" name="nombre" id="nombre" onChange={(e) => setName(e.target.value)}  value={name} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required=""/>
+                      <input type="text" name="nombre" id="nombre" onChange={(e) => setName(e.target.value)}  value={name} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required/>
                   </div>
 
                   <div>
                       <label htmlFor="Apellidos" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apellidos</label>
-                      <input type="text" name="Apellidos" id="Apellidos" onChange={(e) => setLastname(e.target.value)} value={lastname} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required="" />
+                      <input type="text" name="Apellidos" id="Apellidos" onChange={(e) => setLastname(e.target.value)} value={lastname} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required />
                   </div>
 
                   <div>
                       <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Correo</label>
-                      <input type="text" name="email" id="email" onChange={(e) => setEmail(e.target.value)} value={email} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required=""/>
+                      <input type="text" name="email" id="email" onChange={(e) => setEmail(e.target.value)} value={email} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  required/>
                   </div>
                   <div>
                       <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
-                      <input type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password}  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
+                      <input type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} value={password}  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
                       {!!passwordError && <p className="text-red-600 text-sm mt-2">{passwordError}</p>}
                   </div>
 
                   <div>
                       <label htmlFor="ConfirmPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confimar contraseña</label>
-                      <input type="password" name="ConfirmPassword" id="ConfirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword}    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required=""/>
+                      <input type="password" name="ConfirmPassword" id="ConfirmPassword" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword}    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required/>
                       
                   </div>
                   <div className="flex items-center justify-between">
@@ -201,12 +200,6 @@ export default function signup() {
       </Modal>
           </div>
       </div>
-  </div>
-
-  
-
-
-
 </div>
 
   );

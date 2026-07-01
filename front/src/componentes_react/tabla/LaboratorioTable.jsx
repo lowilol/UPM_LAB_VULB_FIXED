@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import '../../styles/Dashboard.css';
+import { Table, TextInput, Select } from 'flowbite-react';
 
-
-
-const LaboratorioTable = ({ Laboratorios , handleRowClickLab }) => {
-  const [selectedBloque , setSelectedBloque] = useState('');
+const LaboratorioTable = ({ Laboratorios, handleRowClickLab }) => {
+  const [selectedBloque, setSelectedBloque] = useState('');
   const [selectedNombre, setSelectedNombre] = useState('');
-  
- 
+
   const filteredLaboratorios = Laboratorios.filter((laboratorio) => {
     const bloqueLaboratorio = laboratorio.ubicacion || '';
     const nombreLaboratorio = laboratorio.nombre_laboratorio || '';
@@ -16,72 +13,68 @@ const LaboratorioTable = ({ Laboratorios , handleRowClickLab }) => {
     const nombreMatch = selectedNombre ? nombreLaboratorio.includes(selectedNombre) : true;
     return bloqueMatch && nombreMatch;
   });
-  
 
   return (
-      <div className="table-container">
-          <div className="filters">
-              <input
-                  type="text"
-                  placeholder="Buscar por laboratorio"
-                  value={selectedNombre}
-                  maxLength={4}
-                  onKeyDown={(e) => {
-                    if (!/^\d$/.test(e.key) && e.key !== 'Backspace') {
-                      e.preventDefault();
-                      alert("Solo se permiten números de 4 dígitos.");
-                    }
-                    
-                  }}
-                  onChange={(e) => {
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <TextInput
+          type="text"
+          placeholder="Buscar por laboratorio"
+          value={selectedNombre}
+          maxLength={4}
+          onKeyDown={(e) => {
+            if (!/^\d$/.test(e.key) && e.key !== 'Backspace') {
+              e.preventDefault();
+              alert("Solo se permiten números de 4 dígitos.");
+            }
+          }}
+          onChange={(e) => {
+            setSelectedNombre(e.target.value);
+          }}
+        />
 
-                      setSelectedNombre(e.target.value); 
-                  }}
-                  className="filter-input"
-              />
+        <Select
+          value={selectedBloque}
+          onChange={(e) => setSelectedBloque(e.target.value)}
+        >
+          <option value="">Todas las ubicaciones</option>
+          {Array.from(new Set(Laboratorios.map((lab) => lab.ubicacion))).map((ubicacion, idk) => {
+            const key = `${ubicacion}-${idk}`;
+            return (
+              <React.Fragment key={key}>
+                <option value={ubicacion}>{ubicacion}</option>
+              </React.Fragment>
+            );
+          })}
+        </Select>
+      </div>
 
-              <select
-                  value={selectedBloque}
-                  onChange={(e) => setSelectedBloque(e.target.value)}
-                  className="filter-select"
+      <div className="overflow-x-auto">
+        <Table hoverable>
+          <Table.Head>
+            <Table.HeadCell>Laboratorio</Table.HeadCell>
+            <Table.HeadCell>Ubicación</Table.HeadCell>
+            <Table.HeadCell>Capacidad</Table.HeadCell>
+          </Table.Head>
+          <Table.Body className="divide-y">
+            {filteredLaboratorios.map((laboratorio) => (
+              <Table.Row
+                key={`${laboratorio.id_laboratorio}-${laboratorio.nombre_laboratorio}`}
+                className="cursor-pointer bg-white dark:border-gray-700 dark:bg-gray-800"
+                onClick={() => handleRowClickLab(laboratorio)}
               >
-                  <option value="">Todas las ubicaciones</option>
-                    {Array.from(new Set(Laboratorios.map((lab) => lab.ubicacion))).map((ubicacion,idk) =>{
-                        const key = `${ubicacion}-${idk}`;
-                        console.log(`Dropdown key: ${key}`); 
-                        console.log("Length of Laboratorios:", Laboratorios.length);
-                        return (<React.Fragment key={ key} >
-                            <option value={ubicacion}>{ubicacion}</option>
-                            </React.Fragment>
-                    )
-
-
-
-                    } 
-                      )}
-                </select>
-            </div>
-
-            <table className="turnos-table">
-                <thead>
-                    <tr>
-                        <th>Laboratorio</th>
-                        <th>Ubicación</th>
-                        <th>Capacidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredLaboratorios.map((laboratorio) => (
-                        <tr key={`${laboratorio.id_laboratorio}-${laboratorio.nombre_laboratorio}`} className="turno-row" onClick={() => handleRowClickLab(laboratorio)}>
-                            <td>{laboratorio.nombre_laboratorio || "No disponible"}</td>
-                            <td>{laboratorio.ubicacion || "No disponible"}</td>
-                            <td>{laboratorio.capacidad}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                  {laboratorio.nombre_laboratorio || "No disponible"}
+                </Table.Cell>
+                <Table.Cell>{laboratorio.ubicacion || "No disponible"}</Table.Cell>
+                <Table.Cell>{laboratorio.capacidad}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      </div>
+    </div>
+  );
 };
 
 export default LaboratorioTable;

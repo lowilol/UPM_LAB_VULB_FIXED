@@ -1,9 +1,13 @@
 import { Page } from '@playwright/test';
 
 // ─────────────────────────────────────────────
-// API base URL del backend
+// Base de las rutas API a interceptar.
+//
+// El front llama a rutas relativas (/api/...), que el navegador resuelve
+// contra el origen del dev server (localhost:3000). Por eso los mocks deben
+// apuntar a localhost:3000, NO a :4000 (el backend real nunca se llama en test).
 // ─────────────────────────────────────────────
-export const API = 'http://localhost:4000/api';
+export const API = 'http://localhost:3000/api';
 
 // ─────────────────────────────────────────────
 // Mock: verifyToken devuelve 401 → usuario NO autenticado

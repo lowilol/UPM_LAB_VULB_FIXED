@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import "../styles/ModalStyle.css";
-import  {normalizarFecha}  from "./TimeFormat/FuntionTimeFormat";
-import AlertResponse  from "./alert"
-const DetailsReservaModal = ({ reserva, onClose, onCancelReserva,errorMensage,success }) => {
+import { Modal, Button } from "flowbite-react";
+import { normalizarFecha } from "./TimeFormat/FuntionTimeFormat";
+import AlertResponse from "./alert";
+
+const DetailRow = ({ label, value }) => (
+  <div className="flex justify-between gap-4 border-b border-gray-200 py-2 dark:border-gray-700">
+    <span className="shrink-0 font-semibold text-gray-700 dark:text-gray-300">{label}</span>
+    <span className="min-w-0 break-words text-right text-gray-900 dark:text-white">{value}</span>
+  </div>
+);
+
+const DetailsReservaModal = ({ reserva, onClose, onCancelReserva, errorMensage, success }) => {
   const [isCancelling, setIsCancelling] = useState(false);
 
   if (!reserva) return null;
@@ -19,65 +27,35 @@ const DetailsReservaModal = ({ reserva, onClose, onCancelReserva,errorMensage,su
   const handleCancelReserva = () => {
     if (window.confirm("¿Estás seguro de que deseas cancelar esta reserva?")) {
       setIsCancelling(true);
-      onCancelReserva( reserva.id_turno,reserva.id_alumno);
+      onCancelReserva(reserva.id_turno, reserva.id_alumno);
       setIsCancelling(false);
     }
   };
 
-
- 
-
-  
-  
-
-
   return (
-    <div className="turno-modal-overlay" onClick={onClose}>
-      
-      <div className="turno-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="turno-modal-close" onClick={onClose}>
-          &times;
-        </button>
-        <h3>Detalles de la Reserva</h3>
-         <AlertResponse mensage={errorMensage}  color={"failure"}/>
-         <AlertResponse mensage={success} color={"success"}/>
-        <div className="turno-details">
-          <div className="detail-row">
-            <span className="detail-label">Laboratorio:</span>
-            <span className="detail-value">{reserva.turno?.laboratorio?.nombre_laboratorio || "N/A"}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Fecha del Turno:</span>
-            <span className="detail-value">{formatDate(reserva.turno?.fecha) || "N/A"}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Hora Inicio:</span>
-            <span className="detail-value">{formatHour(reserva.turno?.hora_inicio) || "N/A"}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Hora Fin:</span>
-            <span className="detail-value">{formatHour(reserva.turno?.hora_fin) || "N/A"}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Fecha de la Reserva:</span>
-            <span className="detail-value">{normalizarFecha(reserva?.fecha_reserva) || "N/A"}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Estado:</span>
-            <span className="detail-value">{reserva.estado || "Activo"}</span>
-          </div>
+    <Modal show={!!reserva} onClose={onClose} size="md">
+      <Modal.Header>Detalles de la Reserva</Modal.Header>
+      <Modal.Body>
+        <AlertResponse mensage={errorMensage} color={"failure"} />
+        <AlertResponse mensage={success} color={"success"} />
+        <div className="flex flex-col">
+          <DetailRow label="Laboratorio:" value={reserva.turno?.laboratorio?.nombre_laboratorio || "N/A"} />
+          <DetailRow label="Fecha del Turno:" value={formatDate(reserva.turno?.fecha) || "N/A"} />
+          <DetailRow label="Hora Inicio:" value={formatHour(reserva.turno?.hora_inicio) || "N/A"} />
+          <DetailRow label="Hora Fin:" value={formatHour(reserva.turno?.hora_fin) || "N/A"} />
+          <DetailRow label="Fecha de la Reserva:" value={normalizarFecha(reserva?.fecha_reserva) || "N/A"} />
+          <DetailRow label="Estado:" value={reserva.estado || "Activo"} />
         </div>
-
-        <div className="turno-actions">
-          {!isCancelling && (
-            <button className="btn-delete" onClick={handleCancelReserva}>
-              Cancelar Reserva
-            </button>
-          )}
-          {isCancelling && <p>Cancelando...</p>}
-        </div>
-      </div>
-    </div>
+      </Modal.Body>
+      <Modal.Footer>
+        {!isCancelling && (
+          <Button color="failure" onClick={handleCancelReserva}>
+            Cancelar Reserva
+          </Button>
+        )}
+        {isCancelling && <p>Cancelando...</p>}
+      </Modal.Footer>
+    </Modal>
   );
 };
 

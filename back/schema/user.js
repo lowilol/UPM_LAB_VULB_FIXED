@@ -10,74 +10,69 @@ const Profesor= require("../models/Profesor");
 
 
 const Rol_ = (dominio) =>{
-   var rol = null
+  // Dominio institucional de alumno -> Alumno; de profesor -> Profesor.
+  // Para cualquier otro dominio se devuelve null y es responsabilidad del
+  // llamante (signup / verifyCode) rechazar el registro. Antes este caso
+  // referenciaba variables inexistentes (res, jsonResponse) y tumbaba el
+  // proceso del servidor ante un correo no institucional.
   if (dominio === "@alumnos.upm.es") {
-    rol ="Alumno";
-    return rol
-  } else if(dominio === "@upm.es") {
-    rol ="Profesor";  
-    return rol
+    return "Alumno";
+  } else if (dominio === "@upm.es") {
+    return "Profesor";
   }
-  else{ 
-    return res.status(500).json(
-    jsonResponse(500, {
-      error: "correo invalido",
-    })
-  );
+  return null;
 }
 
-}
- 
 const extraerDominioCorreo = async(correo)=> {
- 
+
   const partesCorreo = correo.split('@');
-  
-  
+
+
   if (partesCorreo.length !== 2) {
-    return null; 
+    return null;
   }
-  
-  
+
+
   const dominio = '@' + partesCorreo[1];
 
-  
+
   return dominio;
 }
 
 const crearUsuario = async(lastname, password, name, email,rol)=>{
 
   try {
-          
+
     await sequelize.authenticate();
     console.log('Conexión exitosa.');
 
-    
-    
-   
-    await sequelize.sync(); 
-    
+
+
+
+    await sequelize.sync();
+
     const HashedPass =  await  hashPassword(password);
-   
-   
+
+
    console.log(rol)
     newUser = await User.create({
-     
+
       email: email,
-      FirstName: name, 
-      LastName: lastname, 
+      FirstName: name,
+      LastName: lastname,
       rol:rol,
-      password: HashedPass, 
+      password: HashedPass,
     });
     console.log("Nuevo usuario creado con ID:", newUser.id);
-     if (rol === "Alumno") 
+     if (rol === "Alumno")
       {
-        const newAlumno = await Alumno.create({ 
+        const newAlumno = await Alumno.create({
           id_alumno:newUser.id_user,
           matricuala:null,
           id_user:newUser.id_user
         });
         console.log("Nuevo Alumno creado con ID:", newAlumno.id);
-          
+
       }
 
      else if (rol === "Profesor" ) {
@@ -98,8 +93,8 @@ const crearUsuario = async(lastname, password, name, email,rol)=>{
 }
 
 const hashPassword = async (password) => {
-  const saltRounds = 10;  
-      const hash = await bcrypt.hash(password, saltRounds);  
+  const saltRounds = 10;
+      const hash = await bcrypt.hash(password, saltRounds);
       return hash;
 };
 
@@ -108,7 +103,7 @@ const emailExists = async (email) => {
   console.log("--"+User+"--");
   const user = await getUserByEmail (email);
 
-  return !!user; 
+  return !!user;
 };
 
 
@@ -136,7 +131,7 @@ const getUser = async(FirstName, LastName)=>{
 const isCorrectPassword = async (email, password) => {
   const user =await getUserByEmail (email);
   if (!user) {
-    return false; 
+    return false;
   }
 
   const hash = user.password;
@@ -162,22 +157,24 @@ const createResetPasswordToken = async (email) => {
 
 async function updatePassword(userId, newPassword) {
   try {
-   
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // La clave primaria de la tabla 'usuario' es id_user (no 'id'); filtrar por
+    // 'id' provocaba un error SQL y devolvía 500 al restablecer la contraseña.
     const updatedUser = await User.update(
-      { password: hashedPassword }, 
-      { where: { id: userId } }     
+      { password: hashedPassword },
+      { where: { id_user: userId } }
     );
 
-    
-    if (updatedUser[0] === 0) { 
+
+    if (updatedUser[0] === 0) {
       throw new Error('No se pudo actualizar la contraseña. Usuario no encontrado.');
     }
 
-    return true; 
+    return true;
   } catch (error) {
     console.error('Error al actualizar la contraseña:', error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -193,5 +190,5 @@ module.exports = {
   hashPassword,
   UserExists,
   getUser,
-  updatePassword 
+  updatePassword
 };

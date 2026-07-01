@@ -1,4 +1,4 @@
-const { crearUsuario,Rol_,extraerDominioCorreo} = require("../schema/user");
+const { crearUsuario,Rol_,extraerDominioCorreo, createAccessToken, getUserByEmail} = require("../schema/user");
 const express = require("express");
 const { jsonResponse } = require("../lib/jsonResponse");
 const router = express.Router();
@@ -59,7 +59,28 @@ router.post("/", async function (req, res) {
         resetearClave(req, email); // éxito → liberar el contador
         await crearUsuario(lastname, password, name, email, rol);
         await verifyCodeDestroy(email);
-        res.status(200).json({ message: "Usuario creado exitosamente." });
+
+        // Auto-login tras registro: emitir token + cookie y devolver el usuario
+        // (mismo formato plano que /login).
+        const accessToken = await createAccessToken(email);
+        const nuevoUsuario = await getUserByEmail(email);
+        const { id_user, email: userEmail, FirstName, LastName, rol: userRol } =
+          nuevoUsuario.get({ plain: true });
+        const safeUser = { id_user, email: userEmail, FirstName, LastName, rol: userRol };
+
+        res.cookie('access_token', accessToken, {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: false,
+          priority: 'Medium',
+          maxAge: 3600000,
+        });
+
+        res.status(200).json({
+          message: "Usuario creado exitosamente.",
+          user: safeUser,
+          accessToken,
+        });
       } else {
         res.status(400).json(jsonResponse(400, { error: "Código de verificación inválido." }));
       }

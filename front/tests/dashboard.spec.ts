@@ -46,15 +46,16 @@ async function setupDashboard(
   await page.route(`${API}/turno`, (route) =>
     route.fulfill({
       status: 200,
+      // Forma real del backend: laboratorio es objeto anidado (include Sequelize)
       json: [
         {
           id_turno: 1,
           fecha: '2025-06-01',
           hora_inicio: '09:00',
           hora_fin: '11:00',
-          laboratorio: 'Lab A',
-          capacidad: 20,
-          inscritos: 5,
+          capacidad_ocupada: 5,
+          estado: 'Disponible',
+          laboratorio: { nombre_laboratorio: 'Lab A', capacidad: 20 },
         },
       ],
     })
@@ -70,9 +71,9 @@ async function setupDashboard(
           fecha: '2025-06-01',
           hora_inicio: '09:00',
           hora_fin: '11:00',
-          laboratorio: 'Lab A',
-          capacidad: 20,
-          inscritos: 3,
+          capacidad_ocupada: 3,
+          estado: 'Disponible',
+          laboratorio: { nombre_laboratorio: 'Lab A', capacidad: 20 },
         },
       ],
     })
@@ -81,15 +82,20 @@ async function setupDashboard(
   await page.route(`${API}/reserva/1`, (route) =>
     route.fulfill({
       status: 200,
+      // Forma real: reserva con turno anidado y, dentro, laboratorio anidado
       json: [
         {
+          id_reserva: 1,
           id_turno: 1,
           id_alumno: 1,
-          estado: 'Activa',
-          fecha: '2025-06-01',
-          hora_inicio: '09:00',
-          hora_fin: '11:00',
-          laboratorio: 'Lab A',
+          estado: 'Aceptado',
+          fecha_reserva: '2025-05-30',
+          turno: {
+            fecha: '2025-06-01',
+            hora_inicio: '09:00',
+            hora_fin: '11:00',
+            laboratorio: { nombre_laboratorio: 'Lab Quimica' },
+          },
         },
       ],
     })
@@ -101,7 +107,8 @@ async function setupDashboard(
       json: [
         {
           id_laboratorio: 1,
-          nombre: 'Laboratorio A',
+          nombre_laboratorio: 'Laboratorio A',
+          ubicacion: 'Bloque A',
           capacidad: 30,
           estado: 'Habilitado',
         },
@@ -150,8 +157,12 @@ test('D-03 · El botón "Perfil" muestra la sección de perfil del usuario', asy
 
   await page.click('button.btn-profile');
 
-  await expect(page.getByText('Juan')).toBeVisible();
-  await expect(page.getByText('juan@alumnos.upm.es')).toBeVisible();
+  // "Juan García" aparece también en el saludo del dashboard; acotamos la
+  // aserción a la tarjeta de perfil (Card de Flowbite) para evitar ambigüedad.
+  const profileCard = page.getByTestId('flowbite-card');
+  await expect(profileCard).toBeVisible();
+  await expect(profileCard.getByText('Juan García')).toBeVisible();
+  await expect(profileCard.getByText('juan@alumnos.upm.es')).toBeVisible();
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -186,7 +197,8 @@ test('D-06 · "Historial de Reservas" carga las reservas del alumno', async ({ p
 
   await page.click('button:has-text("Historial de Reservas")');
 
-  await expect(page.getByText('Activa')).toBeVisible({ timeout: 8_000 });
+  // ReservaTable muestra el laboratorio del turno reservado (no el estado)
+  await expect(page.getByText('Lab Quimica')).toBeVisible({ timeout: 8_000 });
 });
 
 test('D-07 · Hacer clic en un turno abre el modal de detalles del turno', async ({ page }) => {

@@ -50,10 +50,9 @@ test('L-02 · Login con credenciales válidas redirige al dashboard', async ({ p
     })
   );
 
-  // El dashboard también necesita verifyToken y dashboard mocked
-  await page.route(`${API}/verifyToken`, (route) =>
-    route.fulfill({ status: 200, json: { user: fakeUser } })
-  );
+  // verifyToken se mantiene en 401 (beforeEach) para que el formulario de
+  // login se muestre; tras enviar /login, saveUser marca la sesión como
+  // autenticada y ProtectedRoute permite el acceso a /dashboard.
   await mockDashboard(page, 'Alumno');
 
   await page.goto('/');

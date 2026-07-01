@@ -5,25 +5,25 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); 
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; 
+    z-index: 1000;
   }
-  
+
   /* Contenedor del contenido del modal */
   .modal-content {
-    background: #ffffff; 
+    background: #ffffff;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25); 
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25);
     width: 90%;
-    max-width: 500px; 
-    animation: fadeIn 0.3s ease-in-out; 
+    max-width: 500px;
+    animation: fadeIn 0.3s ease-in-out;
     position: relative;
   }
-  
+
   /* Animación de entrada del modal */
   @keyframes fadeIn {
     from {
@@ -35,7 +35,7 @@
       transform: translateY(0);
     }
   }
-  
+
   /* Botón de cierre del modal */
   .modal-close {
     position: absolute;
@@ -44,37 +44,37 @@
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #333333; 
+    color: #333333;
     cursor: pointer;
     transition: color 0.3s ease;
   }
-  
+
   .modal-close:hover {
-    color: #ff0000; 
+    color: #ff0000;
   }
-  
+
   /* Estilo del título del modal */
   .modal-content h3 {
     font-size: 1.8rem;
-    color: #00468b; 
+    color: #00468b;
     margin-bottom: 1rem;
     text-align: center;
   }
-  
+
   /* Estilos generales del formulario */
   .modal-content form {
     display: flex;
     flex-direction: column;
-    gap: 1rem; 
+    gap: 1rem;
   }
-  
+
   /* Labels */
   .modal-content label {
     font-size: 1rem;
     color: #333333;
     margin-bottom: 0.5rem;
   }
-  
+
   /* Campos de entrada */
   .modal-content input,
   .modal-content select {
@@ -87,13 +87,13 @@
     background-color: #f9f9f9;
     transition: border-color 0.3s ease;
   }
-  
+
   .modal-content input:focus,
   .modal-content select:focus {
     outline: none;
-    border-color: #00468b; 
+    border-color: #00468b;
   }
-  
+
   /* Botón de envío */
   .modal-content button[type="submit"] {
     background-color: #00468b;
@@ -105,7 +105,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-  
+
   .modal-content button[type="submit"]:hover {
     background-color: #003366;
   }
@@ -113,13 +113,13 @@
 
 
   .preview-input {
-    background-color: #f9f9f9; 
-    border: 1px solid #ccc; 
-    color: #333; 
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #333;
     padding: 0.5rem;
     border-radius: 5px;
-    margin-top: 0.5rem; 
-    cursor: not-allowed; 
+    margin-top: 0.5rem;
+    cursor: not-allowed;
   }
 
 
@@ -136,7 +136,7 @@
     align-items: center;
     z-index: 1000;
   }
-  
+
   .turno-modal-content {
     background: white;
     border-radius: 8px;
@@ -147,7 +147,7 @@
     position: relative;
     text-align: left;
   }
-  
+
   .turno-modal-close {
     position: absolute;
     top: 10px;
@@ -157,12 +157,12 @@
     font-size: 1.5rem;
     cursor: pointer;
   }
-  
+
   .turno-details p {
     margin: 10px 0;
     font-size: 1rem;
   }
-  
+
   .turno-details p strong {
     color: #00468b;
   }
@@ -407,14 +407,14 @@ button.btn-cancel:hover {
 
 /* Contenido del modal */
 .laboratorio-modal-content {
-  background: #ffffff; 
-  border-radius: 12px; 
+  background: #ffffff;
+  border-radius: 12px;
   width: 90%;
-  max-width: 600px; 
+  max-width: 600px;
   padding: 25px;
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25); 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
   position: relative;
-  animation: fadeIn 0.3s ease-in-out; 
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Título */
@@ -424,7 +424,7 @@ button.btn-cancel:hover {
   margin-bottom: 20px;
   color: #333333;
   text-align: center;
-  border-bottom: 2px solid #eeeeee; 
+  border-bottom: 2px solid #eeeeee;
   padding-bottom: 10px;
 }
 
@@ -436,13 +436,13 @@ button.btn-cancel:hover {
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #999999; 
+  color: #999999;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .laboratorio-modal-close:hover {
-  color: #ff4d4d; 
+  color: #ff4d4d;
 }
 
 /* Filas de detalles */
@@ -456,11 +456,11 @@ button.btn-cancel:hover {
 
 .laboratorio-detail-label {
   font-weight: bold;
-  color: #555555; 
+  color: #555555;
 }
 
 .laboratorio-detail-value {
-  color: #333333; 
+  color: #333333;
   font-weight: normal;
   text-align: right;
 }
@@ -478,7 +478,7 @@ button.btn-cancel:hover {
 }
 
 .laboratorio-input:focus {
-  border: 1px solid #007bff; 
+  border: 1px solid #007bff;
   outline: none;
 }
 
@@ -505,37 +505,37 @@ button.btn-edit {
 }
 
 button.btn-edit:hover {
-  background-color: #0056b3; 
+  background-color: #0056b3;
 }
 
 /* Botón de eliminar */
 button.btn-delete {
-  background-color: #dc3545; 
+  background-color: #dc3545;
   color: white;
 }
 
 button.btn-delete:hover {
-  background-color: #a71d2a; 
+  background-color: #a71d2a;
 }
 
 /* Botón de guardar cambios */
 button.btn-save {
-  background-color: #28a745; 
+  background-color: #28a745;
   color: white;
 }
 
 button.btn-save:hover {
-  background-color: #218838; 
+  background-color: #218838;
 }
 
 /* Botón de cancelar */
 button.btn-cancel {
-  background-color: #6c757d; 
+  background-color: #6c757d;
   color: white;
 }
 
 button.btn-cancel:hover {
-  background-color: #495057; 
+  background-color: #495057;
 }
 
 
@@ -611,11 +611,11 @@ button.btn-reserve:hover {
   border: 1px solid #ddd;
   border-radius: 4px;
   background-color: #fff;
-  transition: background-color 0.3s ease; 
+  transition: background-color 0.3s ease;
 }
 
 .incidencia-item:hover {
-  background-color:  #e6f7ff;  
+  background-color:  #e6f7ff;
 }
 
 .incidencia-content {

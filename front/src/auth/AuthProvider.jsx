@@ -35,18 +35,21 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
+    // Limpiar estado ANTES del fetch para evitar que el redirect de login
+    // o una ruta protegida rebote a /dashboard mientras isAuthenticated siga
+    // siendo true durante la petición de red.
+    sessionStorage.removeItem("user");
+    setUser(null);
+    setIsAuthenticated(false);
+    navigate("/");
     try {
       await fetch("/api/logout", {
         method: "DELETE",
         credentials: "include",
       });
     } catch (_) {
-      // ignorar errores de red; limpiar igualmente
+      // ignorar errores de red; el estado ya se limpió
     }
-    sessionStorage.removeItem("user");
-    setUser(null);
-    setIsAuthenticated(false);
-    navigate("/");
   }
 
   async function checkAuth() {

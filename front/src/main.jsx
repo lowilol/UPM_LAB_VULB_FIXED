@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./styles/input.css";
 import Login from "./rutas/login.jsx";
 import Signup from "./rutas/signup.jsx";
 import ChangerPassword from "./rutas/ChangerPassword.jsx";
@@ -18,7 +19,7 @@ const App = () => (
         <Route path="/changerPassword/:token" element={<ChangerPassword />} />
         <Route path="/requestPassword" element={<RequestPasssword />} />
 
-      
+
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/me" element={<Profile />} />

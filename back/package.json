@@ -6,11 +6,19 @@
   "scripts": {
     "start": "dotenvx run --env-file=../.env -- node app.js",
     "dev": "dotenvx run --env-file=../.env -- nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:api": "playwright test --config=playwright.api.config.ts",
+    "test:email": "playwright test --config=playwright.api.config.ts cp-email",
+    "test:api:report": "playwright show-report playwright-report-api"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.75.1",
     "bcrypt": "^5.1.1",

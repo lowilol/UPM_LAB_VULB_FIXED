@@ -1,0 +1,18 @@
+{
+  "alumno": {
+    "id": 10074,
+    "email": "cp.alumno.test@alumnos.upm.es",
+    "password": "Passw0rd!Test",
+    "rol": "Alumno",
+    "firstName": "Ana",
+    "lastName": "TestAlumno"
+  },
+  "profesor": {
+    "id": 10075,
+    "email": "cp.profesor.test@upm.es",
+    "password": "Passw0rd!Test",
+    "rol": "Profesor",
+    "firstName": "Pablo",
+    "lastName": "TestProfesor"
+  }
+}

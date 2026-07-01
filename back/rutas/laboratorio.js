@@ -9,7 +9,7 @@ const path = require('path');
 // F-03: Proteger todas las rutas con autenticación JWT
 const authenticateToken = require('../auth/authenticateToken');
 
-const transporter = require('../config/email'); 
+const transporter = require('../config/email');
 
 // Crear un laboratorio
 router.post('/', authenticateToken, async (req, res) => {
@@ -75,8 +75,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
     console.log(laboratorio.id_laboratorio)
     const [rowsUpdated] = await Laboratorio.update(
-      { capacidad: parseInt(capacidad, 10) }, 
-      { where: { id_laboratorio: id } } 
+      { capacidad: parseInt(capacidad, 10) },
+      { where: { id_laboratorio: id } }
     );
 
     if (rowsUpdated === 0) {
@@ -94,7 +94,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
 router.post("/deshabilitar/:id_laboratorio", authenticateToken, async (req, res) => {
   const { id_laboratorio } = req.params;
-  const { id_user } = req.body; 
+  const { id_user } = req.body;
   console.log("deshablilitar"+  id_user)
   try {
       const laboratorio = await Laboratorio.findByPk(id_laboratorio);
@@ -107,12 +107,11 @@ router.post("/deshabilitar/:id_laboratorio", authenticateToken, async (req, res)
           return res.status(400).json({ error: "El laboratorio ya está deshabilitado." });
       }
 
-     
+
       laboratorio.deshabilitado = true;
       await laboratorio.save();
 
       const user_PAS =  await Usuario.findByPk(id_user)
-      console.log(user_PAS.FirstName)
       const profesores = await Profesor.findAll(
         {include: {
           model: Usuario,
@@ -121,16 +120,21 @@ router.post("/deshabilitar/:id_laboratorio", authenticateToken, async (req, res)
       },}
       );
 
-      
+
       const emailTemplatePath = path.join(__dirname, "../templates/email_deshabilitacion_lab.html");
       let emailTemplate = fs.readFileSync(emailTemplatePath, { encoding: "utf-8" });
 
-      const emailPromises = profesores.map((profesor) => {
+      // Solo profesores con usuario y correo asociados; un fallo de envío
+      // individual no debe tumbar la operación (el laboratorio ya está
+      // deshabilitado). Por eso se filtra y se usa allSettled con catch.
+      const emailPromises = profesores
+        .filter((profesor) => profesor.usuario?.email)
+        .map((profesor) => {
           const email = profesor.usuario.email;
           const nombreProfesor = `${profesor.usuario.FirstName} ${profesor.usuario.LastName}`;
-          const nombrePAS = `${user_PAS.FirstName} ${user_PAS.LastName}`;
-          const emailPAS = user_PAS.email;
-          
+          const nombrePAS = `${user_PAS?.FirstName ?? ""} ${user_PAS?.LastName ?? ""}`;
+          const emailPAS = user_PAS?.email ?? "";
+
 
           const mensaje = emailTemplate
               .replace("${profesorNombre}", nombreProfesor)
@@ -143,10 +147,10 @@ router.post("/deshabilitar/:id_laboratorio", authenticateToken, async (req, res)
               to: email,
               subject: "Preaviso: Laboratorio será eliminado",
               html: mensaje,
-          });
+          }).catch((e) => console.error("Fallo al enviar aviso de deshabilitación a", email, e?.message || e));
       });
 
-      await Promise.all(emailPromises);
+      await Promise.allSettled(emailPromises);
 console.log("correo enviado")
       res.status(200).json({ message: "Laboratorio deshabilitado y correos enviados.uu" });
   } catch (error) {
@@ -158,7 +162,7 @@ console.log("correo enviado")
 //habilitar
 router.post("/habilitar/:id_laboratorio", authenticateToken, async (req, res) => {
   const { id_laboratorio } = req.params;
-  const { id_user } = req.body; 
+  const { id_user } = req.body;
   console.log("hablilitar" +  id_user)
   try {
       const laboratorio = await Laboratorio.findByPk(id_laboratorio);
@@ -171,34 +175,35 @@ router.post("/habilitar/:id_laboratorio", authenticateToken, async (req, res) =>
           return res.status(400).json({ error: "El laboratorio ya está habilitado." });
       }
 
-      
+
       laboratorio.deshabilitado = false;
       await laboratorio.save();
 
 
       const user_PAS =  await Usuario.findByPk(id_user)
-      console.log(user_PAS.FirstName)
       const profesores = await Profesor.findAll({
-          
-              
+
+
           include: {
               model: Usuario,
               as: "usuario",
               attributes: ["FirstName", "LastName", "email"],
           },
-      
+
   });
 
-  
+
   const emailTemplatePath = path.join(__dirname, "../templates/email_habilitacion_lab.html");
   let emailTemplate = fs.readFileSync(emailTemplatePath, { encoding: "utf-8" });
 
-  const emailPromises = profesores.map((profesor) => {
+  const emailPromises = profesores
+      .filter((profesor) => profesor.usuario?.email)
+      .map((profesor) => {
       const email = profesor.usuario.email;
       const nombreProfesor = `${profesor.usuario.FirstName} ${profesor.usuario.LastName}`;
-      const nombrePAS = `${user_PAS.FirstName} ${user_PAS.LastName}`;
-      const emailPAS = user_PAS .email;
-      
+      const nombrePAS = `${user_PAS?.FirstName ?? ""} ${user_PAS?.LastName ?? ""}`;
+      const emailPAS = user_PAS?.email ?? "";
+
       const mensaje = emailTemplate
           .replace("${profesorNombre}", nombreProfesor)
           .replace("${nombrelab}", laboratorio.nombre_laboratorio)
@@ -210,10 +215,10 @@ router.post("/habilitar/:id_laboratorio", authenticateToken, async (req, res) =>
           to: email,
           subject: " aviso: rehabilitación del laboratorio",
           html: mensaje,
-      });
+      }).catch((e) => console.error("Fallo al enviar aviso de habilitación a", email, e?.message || e));
   });
 
-  await Promise.all(emailPromises);
+  await Promise.allSettled(emailPromises);
   console.log("correo enviado")
 
       res.status(200).json({ message: "Laboratorio habilitado exitosamente.uu" });
@@ -232,18 +237,18 @@ router.post("/habilitar/:id_laboratorio", authenticateToken, async (req, res) =>
 // Eliminar un laboratorio
 router.delete('/:id_laboratorio_user', authenticateToken, async (req, res) => {
   const param = req.params.id_laboratorio_user;
-  
-  console.log( "param --------- " + param ) 
+
+  console.log( "param --------- " + param )
   const [id_laboratorio, id_user] = param.split("X");
-  console.log( "id_laboratorio--------- " + id_laboratorio) 
-  console.log( "id user--------- " + id_user) 
+  console.log( "id_laboratorio--------- " + id_laboratorio)
+  console.log( "id user--------- " + id_user)
 
    const emailTemplatePath = path.join(__dirname, '../templates/email_Eliminacion_lab.html');
   let emailTemplate = fs.readFileSync(emailTemplatePath, { encoding: 'utf-8' });
 
   try {
     const laboratorio = await Laboratorio.findByPk(id_laboratorio);
-    
+
 
     if (!laboratorio) {
       return res.status(404).json({ error: 'Laboratorio no encontrado' });
@@ -265,13 +270,15 @@ router.delete('/:id_laboratorio_user', authenticateToken, async (req, res) => {
     });
 
     console.log(JSON.stringify(PAS, null, 2));
-    
+
+    const pasInfo = Array.isArray(PAS) ? PAS[0] : PAS;
     for (const profesor of profesores) {
-      const email = profesor.usuario.email;
+      const email = profesor.usuario?.email;
+      if (!email) continue; // omitir profesores sin correo asociado
       const profesorNombre = `${profesor.usuario.FirstName} ${profesor.usuario.LastName}`;
       const asunto = 'Preaviso: Laboratorio Deshabilitado';
-      const emailPas = PAS.email
-      const nombrePAS = `${PAS.FirstName} ${PAS.LastName}`
+      const emailPas = pasInfo?.email ?? ''
+      const nombrePAS = `${pasInfo?.FirstName ?? ''} ${pasInfo?.LastName ?? ''}`
      const mensaje = emailTemplate
       .replace('${ProfesorNombre}', profesorNombre)
       .replace('${nombrelab}', laboratorio.nombre_laboratorio)
@@ -284,7 +291,10 @@ router.delete('/:id_laboratorio_user', authenticateToken, async (req, res) => {
         text: mensaje,
       };
 
-      await transporter.sendMail(mailOptions);
+      // Un fallo de envío individual no debe impedir eliminar el laboratorio.
+      await transporter.sendMail(mailOptions).catch((e) =>
+        console.error('Fallo al enviar aviso de eliminación a', email, e?.message || e)
+      );
     }
 
     await Turno.destroy({ where: { id_laboratorio } });

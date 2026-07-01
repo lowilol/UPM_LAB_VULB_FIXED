@@ -1,4 +1,3 @@
-import '../styles/output.css' 
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -54,14 +53,11 @@ export default function changerPassword() {
   
   return ( 
   
-<div  className="row container-min-width  login-page">
-<div className=" max-w-[30vw] md:max-w-[20vw] lg:max-w-[5vw] bg-white rounded-lg shadow dark:border sm:max-w-sm md:max-w-md xl:max-w-lg dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out">
-
-      
-      <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-      <div className='card-header'>
-          <img className="  h-48" src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="logo"/> 
-      </div>
+<div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
+      <div className="w-full max-w-md rounded-lg bg-white shadow transition-transform duration-300 ease-in-out dark:border dark:border-gray-700 dark:bg-gray-800">
+        <div className="flex justify-center pt-6">
+          <img className="h-40" src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png" alt="logo"/>
+        </div>
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           <div>
             
@@ -93,12 +89,6 @@ export default function changerPassword() {
               </form>
           </div>
       </div>
-  </div>
-
-  
-
-
-
 </div>
 
   );

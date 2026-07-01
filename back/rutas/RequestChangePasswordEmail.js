@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
     subject: 'Reset your password',
     html:emailTemplate,
   }
- transporter.sendMail(mailOptions);
+ await transporter.sendMail(mailOptions);
     res.status(200).json(jsonResponse(200, {
       request: " correo enviado ",
     }));
