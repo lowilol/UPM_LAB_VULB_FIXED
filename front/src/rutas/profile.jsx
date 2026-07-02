@@ -78,4 +78,4 @@ const Perfil = ({ usuario, onUpdate }) => {
   );
 };
 
-e
+export default Perfil;
