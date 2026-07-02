@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
-RUN npm install nodemailer
-RUN npm install mysql2
 COPY . .
 
 # F-12: Ejecutar como usuario no privilegiado (node ya existe en la imagen base)
