@@ -53,6 +53,9 @@ export function AuthProvider({ children }) {
   }
 
   async function checkAuth() {
+    // Solo hubo sesion previa si hay usuario guardado; si no, es la primera
+    // visita (login) y un 401 es lo esperado: no avisar ni programar logout.
+    const hadSession = sessionStorage.getItem("user") !== null;
     try {
       const response = await fetch("/api/verifyToken", {
         method: "POST",
@@ -63,14 +66,22 @@ export function AuthProvider({ children }) {
       if (response.ok) {
         const data = await response.json();
         saveUser(data.user);
-      } else {
+      } else if (hadSession) {
         toast.error("Tu sesion ha expirado. Inicia sesion nuevamente.");
-        setTimeout(() => logout(), 10000);
+        logout();
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
       }
     } catch (error) {
       console.error("Error en la autenticacion:", error);
-      toast.error("Tu sesion ha expirado. Inicia sesion nuevamente.");
-      setTimeout(() => logout(), 10000);
+      if (hadSession) {
+        toast.error("Tu sesion ha expirado. Inicia sesion nuevamente.");
+        logout();
+      } else {
+        setIsAuthenticated(false);
+        setUser(null);
+      }
     } finally {
       setIsLoading(false);
     }
