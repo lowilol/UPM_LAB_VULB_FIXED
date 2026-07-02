@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 import { Navbar, Footer, Button } from 'flowbite-react'
-import { HiUserCircle } from 'react-icons/hi'
+import { HiUserCircle, HiMenu } from 'react-icons/hi'
 
 import HoverButton from '../componentes_react/boton'
 import CreateTurnoModal from "../componentes_react/CreateTurnoModal"
@@ -39,6 +39,7 @@ export default function Dashboard(  ) {
    const [showModalCreateLab, setShowModalCreateLab] = useState(false);
 
    const [content, setContent] = useState("");
+   const [sidebarOpen, setSidebarOpen] = useState(true);
 
    const [turnosDisponibles, setTurnosDisponibles] = useState([]);
    const [MisTurnos, setMisTurnos] = useState([]);
@@ -717,6 +718,12 @@ const closeModalRoeLab= () => {
       setContent("Perfil");
     };
 
+   // Resalta la opción activa del menú lateral (estructura tipo UPM Trámites)
+   const menuItemStyle = (label) =>
+      content === label
+        ? { backgroundColor: "#003366", boxShadow: "inset 4px 0 0 #ffffff" }
+        : {};
+
 
    return (
       <div className="flex h-screen w-screen flex-col">
@@ -724,13 +731,24 @@ const closeModalRoeLab= () => {
 
         {/* Header */}
         <Navbar fluid className="bg-[#00468b] dashboard-nav">
-          <Navbar.Brand href="#">
-            <img
-              src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png"
-              alt="Logo UPM"
-              className="h-12 w-auto rounded-lg bg-white p-1"
-            />
-          </Navbar.Brand>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label="Alternar menú"
+              title="Mostrar/ocultar menú"
+              onClick={() => setSidebarOpen((open) => !open)}
+              className="rounded-lg border border-white/40 bg-[#003366] p-2 text-white shadow-sm transition-colors hover:bg-[#00254d] focus:outline-none focus:ring-2 focus:ring-white"
+            >
+              <HiMenu className="h-6 w-6" />
+            </button>
+            <Navbar.Brand href="#">
+              <img
+                src="https://www.upm.es/sfs/Rectorado/Gabinete%20del%20Rector/Logos/UPM/Logotipo/LOGOTIPO%20color%20PNG.png"
+                alt="Logo UPM"
+                className="h-12 w-auto rounded-lg bg-white p-1"
+              />
+            </Navbar.Brand>
+          </div>
           <div className="flex items-center gap-3">
             <Button color="light" size="sm" className="btn-profile" onClick={handleViewProfile}>
               <HiUserCircle className="mr-2 h-5 w-5" />
@@ -745,7 +763,11 @@ const closeModalRoeLab= () => {
         {/* Main Content */}
         <div className="flex flex-1 overflow-hidden">
           {/* Aside */}
-          <aside className="dashboard-aside flex w-64 flex-shrink-0 flex-col gap-4 bg-[#1f82c0] p-4 text-white">
+          <aside
+            className={`dashboard-aside flex flex-shrink-0 flex-col gap-4 overflow-hidden bg-[#1f82c0] text-white transition-all duration-300 ${
+              sidebarOpen ? "w-64 p-4" : "w-0 p-0"
+            }`}
+          >
             <div>
               <h3 className="text-lg font-semibold">Opciones</h3>
             </div>
@@ -754,32 +776,32 @@ const closeModalRoeLab= () => {
                 {rol !== "PAS" && (
                   <li>
                     <HoverButton onClick={() => handleOptionClickTurnoDisp("Turnos Disponibles")}
-                      label="Turnos Disponibles" ></HoverButton>
+                      label="Turnos Disponibles" styleOverrides={menuItemStyle("Turnos Disponibles")} ></HoverButton>
                   </li>
                 )}
                 {rol === "Alumno" && (
                   <li>
                     <HoverButton onClick={() => handleOptionClickShowReserva("Historial de Reservas")}
-                      label="Historial de Reservas" ></HoverButton>
+                      label="Historial de Reservas" styleOverrides={menuItemStyle("Historial de Reservas")} ></HoverButton>
                   </li>
                 )}
                 {rol === "PAS" && (
                   <li>
                     <HoverButton onClick={() => handleOptionClickMostrarLab("Mostrar Laboratorios")}
-                      label="Mostrar Laboratorios" ></HoverButton>
+                      label="Mostrar Laboratorios" styleOverrides={menuItemStyle("Mostrar Laboratorios")} ></HoverButton>
                   </li>
                 )}
 
                 {rol === "Profesor" && (
                   <li>
                     <HoverButton onClick={() => handleOptionClickMisTurno("Mis Turnos")}
-                      label="Mis Turnos" ></HoverButton>
+                      label="Mis Turnos" styleOverrides={menuItemStyle("Mis Turnos")} ></HoverButton>
                   </li>
                 )}
                 {rol === "Profesor" && (
                   <li>
                     <HoverButton onClick={() => handleOptionClickincidenciasLabAll("Incidencias laboratorio")}
-                      label="Incidencias laboratorio" ></HoverButton>
+                      label="Incidencias laboratorio" styleOverrides={menuItemStyle("Incidencias laboratorio")} ></HoverButton>
                   </li>
                 )}
               </ul>
@@ -817,7 +839,10 @@ const closeModalRoeLab= () => {
 
           {/* Main Section */}
           <section className="flex-1 overflow-y-auto p-6">
-            <h2 className="mb-4 text-2xl font-bold text-gray-800">Bienvenido, {rol} : {name}</h2>
+            <p className="mb-1 text-sm text-gray-500">Bienvenido, {rol} : {name}</p>
+            <h2 className="mb-6 text-center text-2xl font-bold uppercase tracking-wider text-gray-800">
+              {content || "Inicio"}
+            </h2>
             <div>
               {content === "Turnos Disponibles" && <TurnoTable Turnos={turnosDisponibles} handleRowClickTurno={handleRowClickTurno}/>}
               {content === "Mis Turnos" && <TurnoTable Turnos={MisTurnos} handleRowClickTurno={handleRowClickTurno}/>}
@@ -831,8 +856,19 @@ const closeModalRoeLab= () => {
         </div>
 
         {/* Footer */}
-        <Footer container className="rounded-none dashboard-footer">
-          <Footer.Copyright by="Universidad Politécnica de Madrid" year={2025} />
+        <Footer container className="rounded-none bg-[#00468b] dashboard-footer">
+          <div className="flex w-full items-center justify-center gap-2 text-sm text-white">
+            <a
+              href="https://www.upm.es/AvisoLegal"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-white underline hover:text-gray-200"
+            >
+              Aviso Legal
+            </a>
+            <span aria-hidden="true">|</span>
+            <span>© {new Date().getFullYear()} Universidad Politécnica de Madrid</span>
+          </div>
         </Footer>
 
         {/* Modal */}
